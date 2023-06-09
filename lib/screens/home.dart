@@ -12,12 +12,20 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final itemList = Item.itemList();
-  TextEditingController newItemController = TextEditingController();
+  List<Item> foundItemList = [];
+  final TextEditingController _newItemController = TextEditingController();
+  bool showToast = false;
+
+  @override
+  void initState() {
+    foundItemList = itemList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: tbBGColor,
+        backgroundColor: tdBGColor,
         appBar: _buildAppBar(),
         body: Stack(
           children: [
@@ -45,12 +53,17 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                       ),
-                      for (Item item in itemList)
+                      for (Item item in foundItemList.reversed)
                         GroceryItem(
                           item: item,
                           onItemChange: _handleItemChange,
                           onItemDelete: _deleteItem,
                         ),
+                      Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 60,
+                        ),
+                      )
                     ],
                   ))
                 ],
@@ -61,7 +74,8 @@ class _HomeState extends State<Home> {
               child: Row(children: [
                 Expanded(
                     child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                   margin:
                       const EdgeInsets.only(bottom: 20, right: 20, left: 20),
                   decoration: BoxDecoration(
@@ -77,26 +91,31 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextField(
-                    controller: newItemController,
-                    decoration: InputDecoration(
+                    controller: _newItemController,
+                    decoration: const InputDecoration(
                         hintText: 'Add new item', border: InputBorder.none),
                   ),
                 )),
                 Container(
-                  margin: EdgeInsets.only(
+                  margin: const EdgeInsets.only(
                     bottom: 20,
                     right: 20,
                   ),
                   child: ElevatedButton(
-                    child: Text(
-                      '+',
-                      style: TextStyle(fontSize: 40),
-                    ),
-                    onPressed: _addItem,
+                    onPressed: () {
+                      _addItem(_newItemController.text);
+                      if (showToast) {
+                        _showSnackBar(context, "Item added Successfully!");
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       primary: tdBlue,
                       minimumSize: Size(60, 60),
                       elevation: 10,
+                    ),
+                    child: const Text(
+                      '+',
+                      style: TextStyle(fontSize: 40),
                     ),
                   ),
                 )
@@ -118,14 +137,49 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _addItem() {
+  void _addItem(String name) {
     setState(() {
-      if (newItemController.text!.isNotEmpty) {
-        Item item = Item(id: itemList.length, name: newItemController.text);
+      if (name!.isNotEmpty) {
+        Item item = Item(id: DateTime.now().millisecondsSinceEpoch, name: name);
         itemList.add(item);
       }
-      newItemController.text = '';
+      _newItemController.clear();
+      showToast = true;
     });
+  }
+
+  void _doFilterItem(String value) {
+    List<Item> result = [];
+    if (value.isEmpty) {
+      result = itemList;
+    } else {
+      result = itemList
+          .where((element) => element.name!.toLowerCase().contains(value))
+          .toList();
+    }
+    setState(() {
+      foundItemList = result;
+    });
+  }
+
+  void _showSnackBar(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Container(
+        height: 30,
+        alignment: Alignment.center,
+        margin: const EdgeInsets.symmetric(horizontal: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: tdSoftGreen,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child:
+            Text(msg, style: const TextStyle(color: tdDarkGreen, fontSize: 16)),
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ));
   }
 
   Widget searchBox() {
@@ -133,8 +187,9 @@ class _HomeState extends State<Home> {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: const TextField(
-        decoration: InputDecoration(
+      child: TextField(
+        onChanged: (value) => _doFilterItem(value),
+        decoration: const InputDecoration(
           contentPadding: EdgeInsets.all(0),
           prefixIcon: Icon(
             Icons.search,
@@ -156,7 +211,7 @@ class _HomeState extends State<Home> {
   AppBar _buildAppBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: tbBGColor,
+      backgroundColor: tdBGColor,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
