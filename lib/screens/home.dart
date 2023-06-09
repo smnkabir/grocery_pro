@@ -83,9 +83,15 @@ class _HomeState extends State<Home> {
                   ),
                 )),
                 Container(
-                  margin: EdgeInsets.only(bottom: 20, right: 20,),
+                  margin: EdgeInsets.only(
+                    bottom: 20,
+                    right: 20,
+                  ),
                   child: ElevatedButton(
-                    child: Text('+', style: TextStyle(fontSize: 40),),
+                    child: Text(
+                      '+',
+                      style: TextStyle(fontSize: 40),
+                    ),
                     onPressed: _addItem,
                     style: ElevatedButton.styleFrom(
                       primary: tdBlue,
@@ -114,10 +120,12 @@ class _HomeState extends State<Home> {
 
   void _addItem() {
     setState(() {
-      Item item = Item(id: itemList.length, name: newItemController.text);
-      itemList.add(item);
+      if (newItemController.text!.isNotEmpty) {
+        Item item = Item(id: itemList.length, name: newItemController.text);
+        itemList.add(item);
+      }
+      newItemController.text = '';
     });
-    newItemController.text = '';
   }
 
   Widget searchBox() {
