@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../constants/colors.dart';
 import '../model/item.dart';
 import '../widgets/grocery_item.dart';
@@ -11,14 +12,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final itemList = Item.itemList();
+
+  final Box<Item> box = Hive.box<Item>('items');
+  // final itemList = Item.itemList();
   List<Item> foundItemList = [];
   final TextEditingController _newItemController = TextEditingController();
   bool showToast = false;
 
   @override
   void initState() {
-    foundItemList = itemList;
+    // foundItemList = itemList;
+    foundItemList = box.values.toList();
     super.initState();
   }
 
@@ -109,7 +113,7 @@ class _HomeState extends State<Home> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: tdBlue,
+                      backgroundColor: tdBlue,
                       minimumSize: Size(60, 60),
                       elevation: 10,
                     ),
@@ -128,20 +132,26 @@ class _HomeState extends State<Home> {
   void _handleItemChange(Item item) {
     setState(() {
       item.isDone = !item.isDone;
+      box.put(item.id, item);
+      foundItemList = box.values.toList();
     });
   }
 
   void _deleteItem(int id) {
     setState(() {
-      itemList.removeWhere((item) => item.id == id);
+      // itemList.removeWhere((item) => item.id == id);
+      box.delete(id);
+      foundItemList = box.values.toList();
     });
   }
 
   void _addItem(String name) {
     setState(() {
-      if (name!.isNotEmpty) {
-        Item item = Item(id: DateTime.now().millisecondsSinceEpoch, name: name);
-        itemList.add(item);
+      if (name.isNotEmpty) {
+        Item item = Item(id: DateTime.now().millisecond, name: name);
+        // itemList.add(item);
+        box.put(item.id, item);
+        foundItemList = box.values.toList();
       }
       _newItemController.clear();
       showToast = true;
@@ -151,10 +161,10 @@ class _HomeState extends State<Home> {
   void _doFilterItem(String value) {
     List<Item> result = [];
     if (value.isEmpty) {
-      result = itemList;
+      result = box.values.toList();
     } else {
-      result = itemList
-          .where((element) => element.name!.toLowerCase().contains(value))
+      result = box.values.toList()
+          .where((element) => element.name.toLowerCase().contains(value))
           .toList();
     }
     setState(() {

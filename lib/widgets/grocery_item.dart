@@ -27,7 +27,7 @@ class GroceryItem extends StatelessWidget {
           color: tdBlue,
         ),
         title: Text(
-          item.name!,
+          item.name,
           style: TextStyle(
             fontSize: 16,
             color: tdBlack,
@@ -51,6 +51,61 @@ class GroceryItem extends StatelessWidget {
           ),
         ),
       ),
+
+      /*child: InkWell(
+        onTap: () {
+          onItemChange(item);
+        },
+        child: Row(
+          children: [
+            Expanded(
+              flex: 8,
+              child: Row(
+                children: [
+                  Icon(
+                    item.isDone ? Icons.check_box : Icons.check_box_outline_blank,
+                    color: tdBlue,
+                  ),
+
+                  const SizedBox(
+                    width: 10,
+                  ),
+
+                  Text(
+                    "${item.name}  ${item.isDone}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: item.isDone ? Colors.red : Colors.black,
+                      decoration: item.isDone ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.all(0),
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                height: 35,
+                width: 35,
+                decoration: BoxDecoration(
+                  color: tdRed,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: IconButton(
+                  color: Colors.white,
+                  iconSize: 18,
+                  icon: const Icon(Icons.delete),
+                  onPressed:() {onItemDelete(item.id);},
+                ),
+              ),
+            )
+          ],
+        ),
+      ),*/
     );
   }
 }
