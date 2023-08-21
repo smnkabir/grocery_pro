@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants/colors.dart';
 import '../model/item.dart';
+import 'item_modal.dart';
 
 class GroceryItem extends StatelessWidget {
   final Item item;
@@ -15,7 +16,13 @@ class GroceryItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20),
       child: ListTile(
         onTap: () {
-          onItemChange(item);
+          // onItemChange(item);
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return ItemModal(item: item, updatePrice: onItemChange);
+            },
+          );
         },
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -27,11 +34,11 @@ class GroceryItem extends StatelessWidget {
           color: tdBlue,
         ),
         title: Text(
-          item.name,
+          '${item.name}  ${item.isDone ? '     - ' + item.price.toString() + 'Tk' : ''}',
           style: TextStyle(
-            fontSize: 16,
-            color: tdBlack,
-            decoration: item.isDone ? TextDecoration.lineThrough : null,
+            fontSize: 20,
+            color: item.isDone ? tdDarkGreen : tdBlack,
+            // decoration: item.isDone ? TextDecoration.lineThrough : null,
           ),
         ),
         trailing: Container(

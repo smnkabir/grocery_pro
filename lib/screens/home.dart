@@ -131,7 +131,7 @@ class _HomeState extends State<Home> {
 
   void _handleItemChange(Item item) {
     setState(() {
-      item.isDone = !item.isDone;
+      item.isDone = true;
       box.put(item.id, item);
       foundItemList = box.values.toList();
     });
