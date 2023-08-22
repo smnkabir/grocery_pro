@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../constants/colors.dart';
 import '../model/item.dart';
@@ -30,7 +31,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: tdBGColor,
-        appBar: _buildAppBar(),
+        // appBar: _buildAppBar(),
         body: Stack(
           children: [
             Container(
@@ -46,14 +47,15 @@ class _HomeState extends State<Home> {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(
-                          top: 50,
+                          top: 20,
                           bottom: 20,
                         ),
                         child: const Text(
-                          'Grocery items',
+                          'Grocery Items',
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: 28,
                             fontWeight: FontWeight.w500,
+                            color: tdDarkGreen
                           ),
                         ),
                       ),
@@ -108,12 +110,14 @@ class _HomeState extends State<Home> {
                   child: ElevatedButton(
                     onPressed: () {
                       _addItem(_newItemController.text);
-                      if (showToast) {
+                      /*if (showToast) {
                         _showSnackBar(context, "Item added Successfully!");
-                      }
+                      }*/
+                      FocusScope.of(context).unfocus();
                     },
+
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: tdBlue,
+                      backgroundColor: tdDarkGreen,
                       minimumSize: Size(60, 60),
                       elevation: 10,
                     ),
@@ -126,7 +130,28 @@ class _HomeState extends State<Home> {
               ]),
             )
           ],
-        ));
+        ),
+      bottomNavigationBar: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+        child: GNav(
+          rippleColor: tdSoftGreen,
+          hoverColor: tdSoftGreen,
+          haptic: true,
+          tabBorderRadius: 15,
+          gap: 8,
+          color: tdGrey,
+          activeColor: tdDarkGreen,
+          iconSize: 28,
+          // tabBackgroundColor: tdSoftGreen,
+          padding: EdgeInsets.all(16),
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          tabs: [
+            GButton(icon: Icons.home, text: 'Home',),
+            GButton(icon: Icons.history, text: 'History',)
+          ],
+        ),
+      ),
+    );
   }
 
   void _handleItemChange(Item item) {
@@ -195,6 +220,7 @@ class _HomeState extends State<Home> {
   Widget searchBox() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
+      margin: const EdgeInsets.only(top: 45),
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(20)),
       child: TextField(
